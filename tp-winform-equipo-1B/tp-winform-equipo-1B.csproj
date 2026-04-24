@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>tp_winform_equipo_1B</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dominio\dominio.csproj" />
+    <ProjectReference Include="..\infraestrructura\infraestructura.csproj" />
+    <ProjectReference Include="..\servicio\servicio.csproj" />
+  </ItemGroup>
+
+</Project>

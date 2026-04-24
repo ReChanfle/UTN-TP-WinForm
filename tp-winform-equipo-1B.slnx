@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="dominio/dominio.csproj" />
+  <Project Path="infraestrructura/infraestructura.csproj" />
+  <Project Path="servicio/servicio.csproj" />
+  <Project Path="tp-winform-equipo-1B/tp-winform-equipo-1B.csproj" />
+</Solution>
