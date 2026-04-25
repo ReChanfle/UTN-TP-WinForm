@@ -9,12 +9,17 @@ namespace tp_winform_equipo_1B
 {
     public partial class Form1 : Form
     {
-        
+        private List<Imagen> listaImagenesActuales = new List<Imagen>();
+        private int indiceActual = 0;
+
         public Form1()
         {
             InitializeComponent();
             this.Load += Form1_Load;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
+
+
         }
 
         private void CargarArticulos ()
@@ -22,7 +27,7 @@ namespace tp_winform_equipo_1B
 
             try
             {
-                var conexion = new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;");
+                var conexion = new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=BaseDatos#2;TrustServerCertificate=True;");
                 var repo = new ArticuloRepository(conexion);
                 var service = new ArticuloService(repo);
                 var productos = service.Listar();
@@ -223,7 +228,81 @@ namespace tp_winform_equipo_1B
             }
         }
 
-      
+        private void MostrarImagen()
+        {
+            
+            string imagenPorDefecto = "https://static.vecteezy.com/system/resources/previews/022/059/000/non_2x/no-image-available-icon-vector.jpg";
 
+           
+            if (listaImagenesActuales != null && listaImagenesActuales.Count > 0)
+            {
+                try
+                {
+                   
+                    pbVisor.Load(listaImagenesActuales[indiceActual].ImagenUrl);
+                }
+                catch (Exception)
+                {
+                    
+                    pbVisor.Load(imagenPorDefecto);
+                }
+            }
+            else
+            {
+                
+                pbVisor.Load(imagenPorDefecto);
+            }
+        }
+
+
+        private void dataGridView2_SelectionChanged(object sender, EventArgs e)
+        {
+           
+            if (dataGridView2.CurrentRow != null)
+            {
+                Articulo artSeleccionado = (Articulo)dataGridView2.CurrentRow.DataBoundItem;
+
+                if (artSeleccionado != null)
+                {
+                    try
+                    {
+                       
+                        var conexion = new ConexionDb("Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=BaseDatos#2;TrustServerCertificate=True;");
+                        var repoImg = new ImagenRepository(conexion);
+                        var serviceImg = new ImagenService(repoImg);
+
+                        
+                        listaImagenesActuales = serviceImg.ListarPorIdArticulo(artSeleccionado.Id);
+
+              
+                        indiceActual = 0;
+
+                        MostrarImagen();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error al buscar las imágenes: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void btnSiguiente_Click(object sender, EventArgs e)
+        {
+            if (indiceActual < listaImagenesActuales.Count - 1)
+            {
+                indiceActual++; 
+                MostrarImagen(); 
+            }
+        }
+
+        private void btnAnterior_Click(object sender, EventArgs e)
+        {
+            if (indiceActual > 0)
+            {
+                indiceActual--; 
+                MostrarImagen(); 
+            }
+        }
     }
 }
