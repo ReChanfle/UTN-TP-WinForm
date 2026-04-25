@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticuloRepository.cs" />
+    <Compile Include="CategoriaRepository.cs" />
     <Compile Include="ConexionDb.cs" />
     <Compile Include="MarcaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

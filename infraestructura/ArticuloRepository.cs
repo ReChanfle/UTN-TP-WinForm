@@ -51,9 +51,10 @@ namespace infraestructura
                             A.Nombre,
                             A.Descripcion,
                             M.Id AS IdMarca,
-                            M.Descripcion AS Marca,
+                            M.Descripcion AS MarcaDes,
+                            M.Id AS IdMarca,
                             C.Id AS IdCategoria,
-                            C.Descripcion AS Categoria,
+                            C.Descripcion AS CategoriaDes,
                             A.Precio
                         FROM ARTICULOS A
                         LEFT JOIN MARCAS M ON A.IdMarca = M.Id
@@ -71,8 +72,11 @@ namespace infraestructura
                     Nombre = reader["Nombre"].ToString(),
                     Descripcion = reader["Descripcion"].ToString(),
                     Precio = (decimal)reader["Precio"],
-                    Marca = reader["Marca"].ToString(),
-                    Categoria = reader["Categoria"].ToString()
+                    Marca = reader["MarcaDes"].ToString() ?? "Sin marca",
+                    Categoria = reader["CategoriaDes"].ToString() ?? "Sin categoria",
+                    IdCategoria = reader["IdCategoria"] != DBNull.Value ? (int?)reader["IdCategoria"] : null,
+                    IdMarca = reader["IdMarca"] != DBNull.Value ? (int?)reader["IdMarca"] : null
+
                 });
             }
 
@@ -144,6 +148,22 @@ namespace infraestructura
             cmd.Parameters.AddWithValue("@precio", art.Precio);
 
             cmd.ExecuteNonQuery();
+        }
+
+        public void Delete(int id)
+        {
+            using (var conn = _factory.CreateConnection())
+            {
+                conn.Open();
+
+                var query = "DELETE FROM ARTICULOS WHERE Id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

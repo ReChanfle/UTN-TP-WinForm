@@ -29,6 +29,11 @@ namespace servicio
             _repo.Update(art);
         }
 
+        public void Delete (int id)
+        {
+            _repo.Delete(id);
+        }
+
         public void Agregar(Articulo art)
         {
             if (string.IsNullOrEmpty(art.Nombre))

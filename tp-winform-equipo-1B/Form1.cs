@@ -3,7 +3,6 @@ using infraestructura;
 using servicio;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Windows.Forms;
 
 namespace tp_winform_equipo_1B
@@ -15,78 +14,50 @@ namespace tp_winform_equipo_1B
         {
             InitializeComponent();
             this.Load += Form1_Load;
+            dataGridView2.CellContentClick += dataGridView2_CellContentClick;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void CargarArticulos ()
         {
 
-        }
-
-        private void btnCargar_Click(object sender, EventArgs e)
-        {
             try
             {
-                var conexion = new ConexionDb(
-                    "server=localhost\\SQLEXPRESS; database=CATALOGO_P3_DB; integrated security=true"
-                );
-
+                var conexion = new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;");
                 var repo = new ArticuloRepository(conexion);
                 var service = new ArticuloService(repo);
                 var productos = service.Listar();
                 dataGridView2.DataSource = productos;
 
-                dataGridView2.DataSource = service.Listar();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Error: " + ex.Message);
+
+                MessageBox.Show($"Error al cargar los articulos");
             }
         }
 
-        private void btnModificar_Click(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            if (dataGridView2.CurrentRow == null)
-                return;
 
-            Articulo seleccionado = (Articulo)dataGridView2.CurrentRow.DataBoundItem;
+            CargarArticulos();
+            AddbuttonsActions();
 
-            FormArticulo frm = new FormArticulo(seleccionado);
-            frm.ShowDialog();
-
-            // refreshhhhh
-            btnCargar_Click(sender, e);
         }
-
 
         private void LoadComboBrands_Click(object sender, EventArgs e)
         {
 
             try
             {
-                List<Marca> marcas = new List<Marca>();
 
-                var conexionDb = new ConexionDb(
-                    "Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;");
+                List<Marca> marcas = new MarcaService(
+                    new MarcaRepository(
+                        new ConexionDb(
+                            "Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;"
+                            )
+                        )
+                    ).Listar();
 
-                using (SqlConnection conn = conexionDb.CreateConnection())
-                {
-                    conn.Open();
-
-                    string query = "SELECT Id, Descripcion FROM MARCAS";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            marcas.Add(new Marca
-                            {
-                                Id = (int)reader["Id"],
-                                Descripcion = reader["Descripcion"].ToString()
-                            });
-                        }
-                    }
-                }
 
                 toolStripComboBox3.ComboBox.DataSource = marcas;
                 toolStripComboBox3.ComboBox.DisplayMember = "Descripcion";
@@ -105,30 +76,13 @@ namespace tp_winform_equipo_1B
 
             try
             {
-                List<Categoria> categorias = new List<Categoria>();
-
-                var conexionDb = new ConexionDb(
-                    "Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;");
-
-                using (SqlConnection conn = conexionDb.CreateConnection())
-                {
-                    conn.Open();
-
-                    string query = "SELECT Id, Descripcion FROM CATEGORIAS";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            categorias.Add(new Categoria
-                            {
-                                Id = (int)reader["Id"],
-                                Descripcion = reader["Descripcion"].ToString()
-                            });
-                        }
-                    }
-                }
+                List<Categoria> categorias = new CategoriaService(
+                    new CategoriaRepository(
+                        new ConexionDb(
+                            "Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;"
+                            )
+                        )
+                    ).Listar();
 
                 toolStripComboBox4.ComboBox.DataSource = categorias;
                 toolStripComboBox4.ComboBox.DisplayMember = "Descripcion";
@@ -156,7 +110,6 @@ namespace tp_winform_equipo_1B
 
                 var lista = repo.Filtrar(idMarca, idCategoria);
 
-                dataGridView2.DataSource = null;
                 dataGridView2.DataSource = lista;
             }
             catch (Exception ex)
@@ -177,6 +130,97 @@ namespace tp_winform_equipo_1B
                 MessageBox.Show("Error al resetear filtros: " + ex.Message);
             }
         }
+
+        private void AddbuttonsActions()
+        {
+            if (!dataGridView2.Columns.Contains("Editar"))
+            {
+                DataGridViewButtonColumn btnEditar = new DataGridViewButtonColumn();
+                btnEditar.Name = "Editar";
+                btnEditar.HeaderText = "Acciones";
+                btnEditar.Text = "Editar";
+                btnEditar.UseColumnTextForButtonValue = true;
+
+                dataGridView2.Columns.Add(btnEditar);
+            }
+
+            if (!dataGridView2.Columns.Contains("Eliminar"))
+            {
+                DataGridViewButtonColumn btnEliminar = new DataGridViewButtonColumn();
+                btnEliminar.Name = "Eliminar";
+                btnEliminar.HeaderText = "";
+                btnEliminar.Text = "Eliminar";
+                btnEliminar.UseColumnTextForButtonValue = true;
+
+                dataGridView2.Columns.Add(btnEliminar);
+            }
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            if (dataGridView2.Columns[e.ColumnIndex].Name == "Editar")
+            {
+                Articulo artSelecccionado =(Articulo)dataGridView2.Rows[e.RowIndex].DataBoundItem;
+
+                FormArt formArt = new FormArt(artSelecccionado);
+                formArt.ShowDialog();
+
+                if (formArt.DialogResult == DialogResult.OK)
+                {
+                    CargarArticulos();
+                }
+
+            }
+
+            if (dataGridView2.Columns[e.ColumnIndex].Name == "Eliminar")
+            {
+                Articulo art = (Articulo)dataGridView2.Rows[e.RowIndex].DataBoundItem;
+
+                DialogResult resultado = MessageBox.Show(
+                    $"¿Deseás eliminar {art.Nombre}?",
+                    "Confirmar eliminación",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (resultado == DialogResult.Yes)
+                {
+
+                    try
+                    {
+                        ArticuloService artService = new ArticuloService(
+                        new ArticuloRepository(
+                            new ConexionDb(
+                                "Server=localhost;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;"
+                            )
+                        )
+                    );
+                        artService.Delete(art.Id);
+                        MessageBox.Show("Registro eliminado");
+                    }
+                    catch(Exception)
+                    {
+                        MessageBox.Show("Error al eliminar el registro");
+                    }
+                    
+                }
+
+            }
+        }
+
+        private void btnCrearArticulo_Click(object sender, EventArgs e)
+        {
+            FormArt formArt = new FormArt();
+            formArt.ShowDialog();
+            if (formArt.DialogResult == DialogResult.OK)
+            {
+                CargarArticulos();
+            }
+        }
+
+      
 
     }
 }

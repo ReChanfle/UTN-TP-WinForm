@@ -1,34 +1,32 @@
-﻿using System;
+﻿using dominio;
 using System.Collections.Generic;
-using System.Text;
 using System.Data.SqlClient;
-using dominio;
 
 namespace infraestructura
 {
-    public class MarcaRepository
+    public class CategoriaRepository
     {
         private readonly ConexionDb _factory;
 
-        public MarcaRepository(ConexionDb factory)
+        public CategoriaRepository(ConexionDb factory)
         {
             _factory = factory;
         }
 
-        public List<Marca> GetAll()
+        public List<Categoria> GetAll()
         {
-            var lista = new List<Marca>();
+            var lista = new List<Categoria>();
 
             using (var conn = _factory.CreateConnection())
             {
                 conn.Open();
 
-                var cmd = new SqlCommand("SELECT Id, Descripcion FROM Marcas", conn);
+                var cmd = new SqlCommand("SELECT Id, Descripcion FROM CATEGORIAS", conn);
                 var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    lista.Add(new Marca
+                    lista.Add(new Categoria
                     {
                         Id = (int)reader["Id"],
                         Descripcion = reader["Descripcion"].ToString()
@@ -39,7 +37,7 @@ namespace infraestructura
             return lista;
         }
 
-        public void Update(Marca marca)
+        public void Update(Categoria cat)
         {
             var conn = _factory.CreateConnection();
             conn.Open();
@@ -50,8 +48,8 @@ namespace infraestructura
 
             var cmd = new SqlCommand(query, conn);
 
-            cmd.Parameters.AddWithValue("@desc", marca.Descripcion);
-            cmd.Parameters.AddWithValue("@id", marca.Id);
+            cmd.Parameters.AddWithValue("@desc", cat.Descripcion);
+            cmd.Parameters.AddWithValue("@id", cat.Id);
 
             cmd.ExecuteNonQuery();
         }
