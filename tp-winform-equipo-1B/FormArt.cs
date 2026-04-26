@@ -4,7 +4,6 @@ using infraestructura;
 using servicio;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace tp_winform_equipo_1B
@@ -53,7 +52,7 @@ namespace tp_winform_equipo_1B
                 txtPrecio.Text = articulo.Precio.ToString();
 
                 ImagenRepository imgRepo = new ImagenRepository(
-                new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                new ConexionDb()
                 );
 
                 articulo.Imagenes = imgRepo.GetByArticuloId(articulo.Id);
@@ -78,13 +77,13 @@ namespace tp_winform_equipo_1B
         {
             List<Marca> marcas = new MarcaService(
                 new MarcaRepository(
-                    new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                    new ConexionDb()
                 )
             ).Listar();
 
             List<Categoria> categorias = new CategoriaService(
                 new CategoriaRepository(
-                    new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                    new ConexionDb()
                 )
             ).Listar();
 
@@ -135,25 +134,20 @@ namespace tp_winform_equipo_1B
                 
                 ArticuloService artService = new ArticuloService(
                     new ArticuloRepository(
-                        new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                        new ConexionDb()
                     )
                 );
 
                 
                 if (articulo.Id > 0)
-                {
-                    
                     artService.Update(articulo);
-                }
                 else
-                {
-                    
                     artService.Add(articulo);
 
-                }
+                
 
                 ImagenRepository imgRepo = new ImagenRepository(
-                    new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                    new ConexionDb()
                 );
 
                 if (articulo.Id > 0)
@@ -221,8 +215,10 @@ namespace tp_winform_equipo_1B
             RefrescarListaImagenes();
         }
 
-        private void label7_Click(object sender, EventArgs e)
+        private void btnCancelar_Click(object sender, EventArgs e)
         {
+
+            this.Close();
 
         }
     }

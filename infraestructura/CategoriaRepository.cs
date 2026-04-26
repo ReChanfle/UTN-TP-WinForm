@@ -1,5 +1,7 @@
 ﻿using dominio;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace infraestructura
@@ -15,43 +17,95 @@ namespace infraestructura
 
         public List<Categoria> GetAll()
         {
-            var lista = new List<Categoria>();
+            List<Categoria> lista = new List<Categoria>();
 
-            var conn = _factory.CreateConnection();
-            
+            SqlConnection conn = null;
+            SqlCommand cmd = null;
+            SqlDataReader reader = null;
+
+            try
+            {
+                conn = _factory.CreateConnection();
                 conn.Open();
 
-                var cmd = new SqlCommand("SELECT Id, Descripcion FROM CATEGORIAS", conn);
-                var reader = cmd.ExecuteReader();
+                cmd = new SqlCommand(
+                    "SELECT Id, Descripcion FROM CATEGORIAS",
+                    conn);
+
+                reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    lista.Add(new Categoria
-                    {
-                        Id = (int)reader["Id"],
-                        Descripcion = reader["Descripcion"].ToString()
-                    });
-                }
-            
+                    Categoria categoria = new Categoria();
 
-            return lista;
+                    categoria.Id = (int)reader["Id"];
+                    categoria.Descripcion = reader["Descripcion"].ToString();
+
+                    lista.Add(categoria);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener categorías.", ex);
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+
+                if (cmd != null)
+                    cmd.Dispose();
+
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                }
+            }
         }
 
         public void Update(Categoria cat)
         {
-            var conn = _factory.CreateConnection();
-            conn.Open();
+            SqlConnection conn = null;
+            SqlCommand cmd = null;
 
-            var query = @"UPDATE CATEGORIAS SET
-                    Descripcion = @desc,
-                  WHERE Id = @id";
+            try
+            {
+                conn = _factory.CreateConnection();
+                conn.Open();
 
-            var cmd = new SqlCommand(query, conn);
+                string query = @"UPDATE CATEGORIAS SET
+                         Descripcion = @desc
+                         WHERE Id = @id";
 
-            cmd.Parameters.AddWithValue("@desc", cat.Descripcion);
-            cmd.Parameters.AddWithValue("@id", cat.Id);
+                cmd = new SqlCommand(query, conn);
 
-            cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@desc", cat.Descripcion);
+                cmd.Parameters.AddWithValue("@id", cat.Id);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar categoría.", ex);
+            }
+            finally
+            {
+                if (cmd != null)
+                    cmd.Dispose();
+
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                }
+            }
         }
     }
 }

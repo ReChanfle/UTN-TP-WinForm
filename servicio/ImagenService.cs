@@ -34,7 +34,8 @@ namespace servicio
         {
             try
             {
-                return _repository.ListarPorIdArticulo(idArticulo);
+                //return _repository.ListarPorIdArticulo(idArticulo);
+                return null;
             }
             catch (Exception ex)
             {

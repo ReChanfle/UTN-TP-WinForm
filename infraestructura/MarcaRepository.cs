@@ -1,8 +1,8 @@
-﻿using System;
+﻿using dominio;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
 using System.Data.SqlClient;
-using dominio;
 
 namespace infraestructura
 {
@@ -17,43 +17,95 @@ namespace infraestructura
 
         public List<Marca> GetAll()
         {
-            var lista = new List<Marca>();
+            List<Marca> lista = new List<Marca>();
 
-            using (var conn = _factory.CreateConnection())
+            SqlConnection conn = null;
+            SqlCommand cmd = null;
+            SqlDataReader reader = null;
+
+            try
             {
+                conn = _factory.CreateConnection();
                 conn.Open();
 
-                var cmd = new SqlCommand("SELECT Id, Descripcion FROM Marcas", conn);
-                var reader = cmd.ExecuteReader();
+                cmd = new SqlCommand(
+                    "SELECT Id, Descripcion FROM MARCAS",
+                    conn);
+
+                reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    lista.Add(new Marca
-                    {
-                        Id = (int)reader["Id"],
-                        Descripcion = reader["Descripcion"].ToString()
-                    });
+                    Marca marca = new Marca();
+
+                    marca.Id = (int)reader["Id"];
+                    marca.Descripcion = reader["Descripcion"].ToString();
+
+                    lista.Add(marca);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener marcas.", ex);
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+
+                if (cmd != null)
+                    cmd.Dispose();
+
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
                 }
             }
-
-            return lista;
         }
 
         public void Update(Marca marca)
         {
-            var conn = _factory.CreateConnection();
-            conn.Open();
+            SqlConnection conn = null;
+            SqlCommand cmd = null;
 
-            var query = @"UPDATE CATEGORIAS SET
-                    Descripcion = @desc,
-                  WHERE Id = @id";
+            try
+            {
+                conn = _factory.CreateConnection();
+                conn.Open();
 
-            var cmd = new SqlCommand(query, conn);
+                string query = @"UPDATE MARCAS SET
+                         Descripcion = @desc
+                         WHERE Id = @id";
 
-            cmd.Parameters.AddWithValue("@desc", marca.Descripcion);
-            cmd.Parameters.AddWithValue("@id", marca.Id);
+                cmd = new SqlCommand(query, conn);
 
-            cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue("@desc", marca.Descripcion);
+                cmd.Parameters.AddWithValue("@id", marca.Id);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar marca.", ex);
+            }
+            finally
+            {
+                if (cmd != null)
+                    cmd.Dispose();
+
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                }
+            }
         }
     }
 }

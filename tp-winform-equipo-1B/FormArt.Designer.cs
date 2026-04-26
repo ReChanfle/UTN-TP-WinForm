@@ -129,6 +129,7 @@
             this.btnCancelar.TabIndex = 7;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // txtImagen
             // 
@@ -253,7 +254,7 @@
             this.label7.Size = new System.Drawing.Size(101, 16);
             this.label7.TabIndex = 19;
             this.label7.Text = "Agregar una Url";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
+            //this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label8
             // 

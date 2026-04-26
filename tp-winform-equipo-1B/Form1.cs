@@ -10,8 +10,8 @@ namespace tp_winform_equipo_1B
 {
     public partial class Form1 : Form
     {
-        private List<Imagen> listaImagenesActuales = new List<Imagen>();
-        private int indiceActual = 0;
+        private List<Imagen> imagenesActuales = new List<Imagen>();
+        private int indiceImagenActual = 0;
 
         public Form1()
         {
@@ -28,7 +28,7 @@ namespace tp_winform_equipo_1B
 
             try
             {
-                var conexion = new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=BaseDatos#2;TrustServerCertificate=True;");
+                var conexion = new ConexionDb();
                 var repo = new ArticuloRepository(conexion);
                 var service = new ArticuloService(repo);
                 var productos = service.Listar();
@@ -61,7 +61,7 @@ namespace tp_winform_equipo_1B
 
                 List<Marca> marcas = new MarcaService(
                     new MarcaRepository(
-                        new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                        new ConexionDb()
                         )
                     ).Listar();
 
@@ -85,7 +85,7 @@ namespace tp_winform_equipo_1B
             {
                 List<Categoria> categorias = new CategoriaService(
                     new CategoriaRepository(
-                        new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
+                        new ConexionDb()
                         )
                     ).Listar();
 
@@ -108,7 +108,7 @@ namespace tp_winform_equipo_1B
                 int idMarca = Convert.ToInt32(toolStripComboBox3.ComboBox.SelectedValue);
                 int idCategoria = Convert.ToInt32(toolStripComboBox4.ComboBox.SelectedValue);
 
-                var conexion = new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;");
+                var conexion = new ConexionDb();
 
                 var repo = new ArticuloRepository(conexion);
 
@@ -126,7 +126,6 @@ namespace tp_winform_equipo_1B
         {
             try
             {
-              
                this.Form1_Load(sender, e);
             }
             catch (Exception ex)
@@ -160,9 +159,9 @@ namespace tp_winform_equipo_1B
             }
         }
 
-        private async void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show("CLICK");
+            
 
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
@@ -175,15 +174,26 @@ namespace tp_winform_equipo_1B
 
             var art = (Articulo)grid.Rows[e.RowIndex].DataBoundItem;
 
-            
+
             if (grid.Columns[e.ColumnIndex].Name == "Editar")
             {
-                using (FormArt formArt = new FormArt(art))
+                try
                 {
-                    if (formArt.ShowDialog() == DialogResult.OK)
+                    using (FormArt formArt = new FormArt(art))
                     {
-                        CargarArticulos();
+                        if (formArt.ShowDialog() == DialogResult.OK)
+                        {
+                            CargarArticulos();
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "No se pudo abrir la ventana de edición.\n" + ex.Message,
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
 
@@ -201,16 +211,15 @@ namespace tp_winform_equipo_1B
                 {
                     try
                     {
-                        await Task.Run(() =>
-                        {
-                            ArticuloService artService = new ArticuloService(
-                                new ArticuloRepository(
-                                    new ConexionDb("Server=localhost,1433;Database=CATALOGO_P3_DB;User Id=sa;Password=NuevaPassword123;TrustServerCertificate=True;")
-                                )
-                            );
+                       
+                        ArticuloService artService = new ArticuloService(
+                            new ArticuloRepository(
+                                 new ConexionDb()
+                            )
+                        );
 
-                            artService.Delete(art.Id);
-                        });
+                        artService.Delete(art.Id);
+                        
 
                         MessageBox.Show("Registro eliminado");
                         CargarArticulos();
@@ -225,12 +234,100 @@ namespace tp_winform_equipo_1B
 
         private void btnCrearArticulo_Click(object sender, EventArgs e)
         {
-            FormArt formArt = new FormArt();
-            formArt.ShowDialog();
-            if (formArt.DialogResult == DialogResult.OK)
+            try
             {
-                CargarArticulos();
+                using (FormArt formArt = new FormArt())
+                {
+                    if (formArt.ShowDialog() == DialogResult.OK)
+                    {
+                        CargarArticulos();
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "No se pudo abrir la ventana de creación.\n" + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void dataGridView2_SelectionChanged(object sender, EventArgs e)
+        {
+            MostrarImagenSeleccionada();
+        }
+
+        private void MostrarImagenSeleccionada()
+        {
+            try
+            {
+                if (dataGridView2.CurrentRow == null)
+                    return;
+
+                Articulo seleccionado =
+                    (Articulo)dataGridView2.CurrentRow.DataBoundItem;
+
+                if (seleccionado != null)
+                {
+                    imagenesActuales = seleccionado.Imagenes;
+                    indiceImagenActual = 0;
+
+                    MostrarImagenActual();
+                }
+            }
+            catch
+            {
+                pictureBox1.Image = null;
+            }
+        }
+
+
+        private void MostrarImagenActual()
+        {
+            try
+            {
+                if (imagenesActuales == null || imagenesActuales.Count == 0)
+                {
+                    pictureBox1.Image = null;
+                    return;
+                }
+
+                string url = imagenesActuales[indiceImagenActual].ImagenUrl;
+
+                pictureBox1.Load(url);
+            }
+            catch
+            {
+                pictureBox1.Image = null;
+            }
+        }
+
+        private void btnNextPicture_Click(object sender, EventArgs e)
+        {
+            if (imagenesActuales == null || imagenesActuales.Count == 0)
+                return;
+
+            indiceImagenActual++;
+
+            if (indiceImagenActual >= imagenesActuales.Count)
+                indiceImagenActual = 0;
+
+            MostrarImagenActual();
+        }
+
+        private void btnLastPicture_Click(object sender, EventArgs e)
+        {
+            if (imagenesActuales == null || imagenesActuales.Count == 0)
+                return;
+
+            indiceImagenActual--;
+
+            if (indiceImagenActual < 0)
+                indiceImagenActual = imagenesActuales.Count - 1;
+
+            MostrarImagenActual();
         }
 
     }

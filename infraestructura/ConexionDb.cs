@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace infraestructura
 {
@@ -7,21 +8,18 @@ namespace infraestructura
     {
         private readonly string _connectionString;
 
-        public ConexionDb(string connectionString)
+        public ConexionDb()
         {
-            _connectionString = connectionString;
+            _connectionString = ConfigurationManager
+            .ConnectionStrings["DefaultConnection"]
+            .ConnectionString;
         }
 
         public SqlConnection CreateConnection()
         {
-            try
-            {
-                return new SqlConnection(_connectionString);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("No se pudo conectar a la base de datos.", ex);
-            }
+            
+            return new SqlConnection(_connectionString);
+            
         }
     }
 }
