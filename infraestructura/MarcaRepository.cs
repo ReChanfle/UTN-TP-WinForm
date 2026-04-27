@@ -123,20 +123,7 @@ namespace infraestructura
                 }
             }
         }
-        public void Delete(int id)
-        {
-            using (var conn = _factory.CreateConnection())
-            {
-                conn.Open();
 
-                var query = "DELETE FROM MARCAS WHERE Id = @id";
 
-                using (var cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
     }
 }

@@ -3,5 +3,5 @@
   <Project Path="dominio/dominio.csproj" Id="a293b01e-3756-4e3b-8228-bada4816e916" />
   <Project Path="infraestructura/infraestructura.csproj" Id="124626bb-ab02-463d-a35a-e9a9cb754ea1" />
   <Project Path="servicio/servicio.csproj" Id="c0e57de2-903d-4032-86bf-570ae5c0c00a" />
-  <Project Path="tp-winform-equipo-1B/tp-winform-equipo-1B.csproj" Id="a9f94383-23ed-4719-b0f3-4564d0e85dc8" />
+  <Project Path="tp-winform-equipo-1B/formulario.csproj" Id="a9f94383-23ed-4719-b0f3-4564d0e85dc8" />
 </Solution>

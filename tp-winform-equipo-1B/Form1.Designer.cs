@@ -55,13 +55,14 @@
             // btnAgregar
             // 
             this.btnAgregar.AccessibleName = "btnAgregar";
+            this.btnAgregar.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnAgregar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Location = new System.Drawing.Point(12, 462);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(141, 35);
             this.btnAgregar.TabIndex = 2;
             this.btnAgregar.Text = "Agregar Producto";
-            this.btnAgregar.UseVisualStyleBackColor = true;
+            this.btnAgregar.UseVisualStyleBackColor = false;
             this.btnAgregar.Click += new System.EventHandler(this.btnCrearArticulo_Click);
             // 
             // dataGridView2
@@ -121,7 +122,7 @@
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Margin = new System.Windows.Forms.Padding(2, 1, 0, 2);
+            this.toolStripButton1.Margin = new System.Windows.Forms.Padding(2, 1, 4, 2);
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(41, 22);
             this.toolStripButton1.Text = "Filtrar";
@@ -156,7 +157,7 @@
             this.btnLastpicture.Size = new System.Drawing.Size(91, 19);
             this.btnLastpicture.TabIndex = 6;
             this.btnLastpicture.Text = "Anterior";
-            this.btnLastpicture.UseVisualStyleBackColor = true;
+            this.btnLastpicture.UseVisualStyleBackColor = false;
             this.btnLastpicture.Click += new System.EventHandler(this.btnLastPicture_Click);
             // 
             // btnNextPticture
@@ -167,7 +168,7 @@
             this.btnNextPticture.Size = new System.Drawing.Size(85, 19);
             this.btnNextPticture.TabIndex = 7;
             this.btnNextPticture.Text = "Siguiente";
-            this.btnNextPticture.UseVisualStyleBackColor = true;
+            this.btnNextPticture.UseVisualStyleBackColor = false;
             this.btnNextPticture.Click += new System.EventHandler(this.btnNextPicture_Click);
             // 
             // label1
