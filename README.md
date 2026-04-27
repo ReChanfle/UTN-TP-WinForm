@@ -61,8 +61,6 @@ Tablas principales:
 
 Configurar connection string:
 
-<code>
-<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <connectionStrings>
     <add name="DefaultConnection"
@@ -70,4 +68,3 @@ Configurar connection string:
          providerName="System.Data.SqlClient" />
   </connectionStrings>
 </configuration>
-    </code>
