@@ -20,16 +20,19 @@ namespace servicio
             return _repo.GetAll();
         }
 
-        public void Add(Marca marca)
+        public void Add(Marca mar)
         {
-            _repo.Update(marca);
+            _repo.Add(mar);
         }
 
-        public void Update(Marca marca)
+        public void Update(Marca mar)
         {
-            _repo.Update(marca);
+            _repo.Update(mar);
+        }
+        public void Delete(int id)
+        {
+            _repo.Delete(id);
         }
     }
-
     
-    }
+}

@@ -25,7 +25,7 @@ namespace servicio
 
         public void Add(Categoria cat)
         {
-            _repo.Update(cat);
+            _repo.Add(cat);
         }
 
         public void Update(Categoria cat)
@@ -33,6 +33,10 @@ namespace servicio
             _repo.Update(cat);
         }
 
+        public void Delete(int id)
+        {
+            _repo.Delete(id);
+        }
 
     }
 }
