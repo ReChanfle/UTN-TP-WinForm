@@ -364,5 +364,14 @@ namespace tp_winform_equipo_1B
         {
             txtBuscar.Text = "";
         }
+
+        private void btnGestionar_Click(object sender, EventArgs e)
+        {
+            FormMarca formMarca = new FormMarca();
+            formMarca.ShowDialog();
+
+            FormCategoria formCategoria = new FormCategoria();
+            formCategoria.ShowDialog();
+        }
     }
 }
