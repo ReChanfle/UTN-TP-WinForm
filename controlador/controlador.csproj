@@ -51,6 +51,10 @@
       <Project>{a293b01e-3756-4e3b-8228-bada4816e916}</Project>
       <Name>dominio</Name>
     </ProjectReference>
+    <ProjectReference Include="..\infraestructura\infraestructura.csproj">
+      <Project>{124626bb-ab02-463d-a35a-e9a9cb754ea1}</Project>
+      <Name>infraestructura</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

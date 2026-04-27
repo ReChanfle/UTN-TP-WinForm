@@ -37,10 +37,10 @@ namespace tp_winform_equipo_1B
                 dataGridView2.Columns["IdCategoria"].Visible = false;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                MessageBox.Show($"Error al cargar los articulos");
+                MessageBox.Show($"Error al cargar los articulos: "+ex.Message);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using dominio;
+﻿using controlador;
+using dominio;
 using infraestructura;
 using servicio;
 using System;
@@ -8,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -37,15 +39,15 @@ namespace tp_winform_equipo_1B
                 listaMarcas = new MarcaService(new MarcaRepository(conexion)).Listar();
                 listaCategorias = new CategoriaService(new CategoriaRepository(conexion)).Listar();
 
-                // marcas
+        
                 dgvMarcas.DataSource = null;
                 dgvMarcas.DataSource = listaMarcas;
 
-                //categorias
+               
                 dgvCategorias.DataSource = null;
                 dgvCategorias.DataSource = listaCategorias;
 
-                //ocultar ID
+               
                 if (dgvMarcas.Columns["Id"] != null)
                     dgvMarcas.Columns["Id"].Visible = false;
 
@@ -58,98 +60,299 @@ namespace tp_winform_equipo_1B
             }
         }
 
-        public static string Prompt(string texto)
+        public static string Prompt(string texto, string valorInicial = "")
         {
             Form prompt = new Form()
             {
                 Width = 300,
                 Height = 150,
-                Text = texto
+                Text = texto,
+                StartPosition = FormStartPosition.CenterScreen
             };
 
-            TextBox txt = new TextBox() { Left = 20, Top = 20, Width = 240 };
-            Button btnOk = new Button() { Text = "OK", Left = 180, Width = 80, Top = 50 };
+            TextBox txt = new TextBox()
+            {
+                Left = 20,
+                Top = 20,
+                Width = 240,
+                Text = valorInicial
+            };
 
-            btnOk.Click += (sender, e) => { prompt.Close(); };
+            txt.SelectAll();
+            txt.Focus();
+
+            Button btnOk = new Button()
+            {
+                Text = "OK",
+                Left = 180,
+                Width = 80,
+                Top = 50,
+                DialogResult = DialogResult.OK
+            };
 
             prompt.Controls.Add(txt);
             prompt.Controls.Add(btnOk);
 
-            prompt.ShowDialog();
+            prompt.AcceptButton = btnOk;
 
-            return txt.Text;
+            return prompt.ShowDialog() == DialogResult.OK
+                ? txt.Text
+                : "";
         }
         private void btnAgregarMarca_Click(object sender, EventArgs e)
         {
-            string descripcion = Prompt("Nueva marca:");
-
-            if (!string.IsNullOrWhiteSpace(descripcion))
+            try
             {
-                var service = new MarcaService(
-                    new MarcaRepository(
-                        new ConexionDb()
-                    )
-                );
+                string descripcion = Prompt("Nueva marca:");
 
-                service.Add(new Marca { Descripcion = descripcion });
+                var conexion = new ConexionDb();
+                var repo = new MarcaRepository(conexion);
+                var service = new MarcaService(repo);
+                var controller = new MarcaController(repo);
+
+                Marca marca = new Marca();
+                marca.Descripcion = descripcion;
+
+                List<string> errores = controller.Validate(marca);
+
+                if (errores.Count > 0)
+                {
+                    MessageBox.Show(
+                        string.Join(Environment.NewLine, errores),
+                        "Validación",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+
+                service.Add(marca);
+
                 CargarDatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al agregar marca: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnEliminarMarca_Click(object sender, EventArgs e)
         {
-            if (dgvMarcas.CurrentRow == null)
-                return;
-
-            Marca marca = (Marca)dgvMarcas.CurrentRow.DataBoundItem;
-
-            var confirm = MessageBox.Show("¿Eliminar marca?", "Confirmar", MessageBoxButtons.YesNo);
-
-            if (confirm == DialogResult.Yes)
+            try
             {
-                var service = new MarcaService(
-                    new MarcaRepository(new ConexionDb())
-                );
+                if (dgvMarcas.CurrentRow == null)
+                    return;
 
-                service.Delete(marca.Id);
-                CargarDatos();
+                Marca marca = (Marca)dgvMarcas.CurrentRow.DataBoundItem;
+
+                DialogResult confirm = MessageBox.Show(
+                    "¿Eliminar marca?",
+                    "Confirmar",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirm == DialogResult.Yes)
+                {
+                    var service = new MarcaService(
+                        new MarcaRepository(
+                            new ConexionDb()
+                        )
+                    );
+
+                    service.Delete(marca.Id);
+
+                    CargarDatos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al eliminar marca: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnAgregarCategoria_Click(object sender, EventArgs e)
         {
-            string descripcion = Prompt("Nueva categoría:");
-
-            if (!string.IsNullOrWhiteSpace(descripcion))
+            try
             {
-                var service = new CategoriaService(
-                    new CategoriaRepository(
-                        new ConexionDb()
-                    )
-                );
+                string descripcion = Prompt("Nueva categoría:");
 
-                service.Add(new Categoria { Descripcion = descripcion });
+                var conexion = new ConexionDb();
+                var repo = new CategoriaRepository(conexion);
+                var service = new CategoriaService(repo);
+                var controller = new CategoriaController(repo);
+
+                Categoria categoria = new Categoria();
+                categoria.Descripcion = descripcion;
+
+                List<string> errores = controller.Validate(categoria);
+
+                if (errores.Count > 0)
+                {
+                    MessageBox.Show(
+                        string.Join(Environment.NewLine, errores),
+                        "Validación",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+
+                service.Add(categoria);
+
                 CargarDatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al agregar categoría: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
         private void btnEliminarCategoria_Click(object sender, EventArgs e)
         {
-            if (dgvCategorias.CurrentRow == null)
-                return;
-
-            Categoria categoria = (Categoria)dgvCategorias.CurrentRow.DataBoundItem;
-
-            var confirm = MessageBox.Show("¿Eliminar categoría?", "Confirmar", MessageBoxButtons.YesNo);
-
-            if (confirm == DialogResult.Yes)
+            try
             {
-                var service = new CategoriaService(
-                    new CategoriaRepository(new ConexionDb())
-                );
+                if (dgvCategorias.CurrentRow == null)
+                    return;
 
-                service.Delete(categoria.Id);
+                Categoria categoria =
+                    (Categoria)dgvCategorias.CurrentRow.DataBoundItem;
+
+                DialogResult confirm = MessageBox.Show(
+                    "¿Eliminar categoría?",
+                    "Confirmar",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirm == DialogResult.Yes)
+                {
+                    var service = new CategoriaService(
+                        new CategoriaRepository(
+                            new ConexionDb()
+                        )
+                    );
+
+                    service.Delete(categoria.Id);
+
+                    CargarDatos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al eliminar categoría: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnEditarMarca_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvMarcas.CurrentRow == null)
+                    return;
+
+                Marca marca = (Marca)dgvMarcas.CurrentRow.DataBoundItem;
+
+                string nuevaDescripcion =
+                Prompt("Editar categoría:", marca.Descripcion);
+
+                Marca temp = new Marca();
+                temp.Id = marca.Id;
+                temp.Descripcion = nuevaDescripcion;
+
+                var conexion = new ConexionDb();
+                var repo = new MarcaRepository(conexion);
+                var service = new MarcaService(repo);
+                var controller = new MarcaController(repo);
+
+                List<string> errores = controller.ValidateEdit(temp);
+
+                if (errores.Count > 0)
+                {
+                    MessageBox.Show(
+                   string.Join(Environment.NewLine, errores),
+                   "Validación",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Warning);
+                    return;
+                }
+
+                temp.Descripcion = nuevaDescripcion;
+                service.Update(temp);
                 CargarDatos();
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al editar marca: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnEditarCategoria_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvMarcas.CurrentRow == null)
+                    return;
+
+                Categoria categoria = (Categoria)dgvCategorias.CurrentRow.DataBoundItem;
+
+                string nuevaDescripcion =
+                Prompt("Editar categoría:", categoria.Descripcion);
+
+                Categoria temp = new Categoria();
+                temp.Id = categoria.Id;
+                temp.Descripcion = nuevaDescripcion;
+
+                var conexion = new ConexionDb();
+                var repo = new CategoriaRepository(conexion);
+                var service = new CategoriaService(repo);
+                var controller = new CategoriaController(repo);
+
+                List<string> errores = controller.ValidateEdit(temp);
+
+                if (errores.Count > 0)
+                {
+                    MessageBox.Show(
+                    string.Join(Environment.NewLine, errores),
+                    "Validación",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                    return;
+                }
+
+                temp.Descripcion = nuevaDescripcion;
+                service.Update(temp);
+                CargarDatos();
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error al editar categoría: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
     }

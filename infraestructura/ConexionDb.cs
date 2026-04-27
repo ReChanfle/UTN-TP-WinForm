@@ -11,8 +11,11 @@ namespace infraestructura
         public ConexionDb()
         {
             _connectionString = ConfigurationManager
-            .ConnectionStrings["DefaultConnection"]
-            .ConnectionString;
+         .ConnectionStrings["DefaultConnection"]
+         ?.ConnectionString;
+
+            if (string.IsNullOrWhiteSpace(_connectionString))
+                throw new Exception("No se encontró la cadena de conexión DefaultConnection. Por favor cargue una conexion valida a la base de datos");
         }
 
         public SqlConnection CreateConnection()

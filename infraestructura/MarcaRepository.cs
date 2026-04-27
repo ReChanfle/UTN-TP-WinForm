@@ -124,6 +124,43 @@ namespace infraestructura
             }
         }
 
+        public void Delete(int id)
+        {
+            SqlConnection conn = null;
+            SqlCommand cmd = null;
+
+            try
+            {
+                conn = _factory.CreateConnection();
+                conn.Open();
+
+                string query = "DELETE FROM MARCAS WHERE Id = @id";
+
+                cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@id", id);
+
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar marca.", ex);
+            }
+            finally
+            {
+                if (cmd != null)
+                    cmd.Dispose();
+
+                if (conn != null)
+                {
+                    if (conn.State == ConnectionState.Open)
+                        conn.Close();
+
+                    conn.Dispose();
+                }
+            }
+        }
+
 
     }
 }
