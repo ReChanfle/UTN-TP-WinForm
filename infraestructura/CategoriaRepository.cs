@@ -107,5 +107,37 @@ namespace infraestructura
                 }
             }
         }
+
+        public void Add(Categoria cat)
+        {
+            using (var conn = _factory.CreateConnection())
+            {
+                conn.Open();
+
+                var query = "INSERT INTO CATEGORIAS (Descripcion) VALUES (@desc)";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@desc", cat.Descripcion);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (var conn = _factory.CreateConnection())
+            {
+                conn.Open();
+
+                var query = "DELETE FROM CATEGORIAS WHERE Id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

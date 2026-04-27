@@ -20,7 +20,6 @@ namespace tp_winform_equipo_1B
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
             dataGridView2.SelectionChanged += dataGridView2_SelectionChanged;
 
-
         }
 
         private void CargarArticulos ()
@@ -55,7 +54,6 @@ namespace tp_winform_equipo_1B
 
         private void LoadComboBrands_Click(object sender, EventArgs e)
         {
-
             try
             {
 
@@ -76,7 +74,6 @@ namespace tp_winform_equipo_1B
             }
 
         }
-
 
         private void LoadComboCategory_Click(object sender, EventArgs e)
         {
@@ -99,7 +96,6 @@ namespace tp_winform_equipo_1B
             }
 
         }
-
 
         private void Filter_Click(object sender, EventArgs e)
         {
@@ -367,11 +363,10 @@ namespace tp_winform_equipo_1B
 
         private void btnGestionar_Click(object sender, EventArgs e)
         {
-            FormMarca formMarca = new FormMarca();
-            formMarca.ShowDialog();
-
-            FormCategoria formCategoria = new FormCategoria();
-            formCategoria.ShowDialog();
+            using (FormGestion f = new FormGestion())
+            {
+                f.ShowDialog();
+            }
         }
     }
 }

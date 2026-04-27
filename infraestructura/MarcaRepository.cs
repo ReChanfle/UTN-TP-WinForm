@@ -68,6 +68,22 @@ namespace infraestructura
             }
         }
 
+        public void Add(Marca mar)
+        {
+            using (var conn = _factory.CreateConnection())
+            {
+                conn.Open();
+
+                var query = "INSERT INTO MARCAS (Descripcion) VALUES (@desc)";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@desc", mar.Descripcion);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void Update(Marca marca)
         {
             SqlConnection conn = null;
@@ -104,6 +120,21 @@ namespace infraestructura
                         conn.Close();
 
                     conn.Dispose();
+                }
+            }
+        }
+        public void Delete(int id)
+        {
+            using (var conn = _factory.CreateConnection())
+            {
+                conn.Open();
+
+                var query = "DELETE FROM MARCAS WHERE Id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
