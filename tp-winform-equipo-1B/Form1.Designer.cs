@@ -50,6 +50,7 @@
             // btnAgregar
             // 
             this.btnAgregar.AccessibleName = "btnAgregar";
+            this.btnAgregar.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnAgregar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAgregar.Location = new System.Drawing.Point(16, 569);
             this.btnAgregar.Margin = new System.Windows.Forms.Padding(4);
@@ -57,7 +58,7 @@
             this.btnAgregar.Size = new System.Drawing.Size(188, 43);
             this.btnAgregar.TabIndex = 2;
             this.btnAgregar.Text = "Agregar Producto";
-            this.btnAgregar.UseVisualStyleBackColor = true;
+            this.btnAgregar.UseVisualStyleBackColor = false;
             this.btnAgregar.Click += new System.EventHandler(this.btnCrearArticulo_Click);
             // 
             // dataGridView2
@@ -118,7 +119,7 @@
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Margin = new System.Windows.Forms.Padding(2, 1, 0, 2);
+            this.toolStripButton1.Margin = new System.Windows.Forms.Padding(2, 1, 4, 2);
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(51, 25);
             this.toolStripButton1.Text = "Filtrar";
@@ -138,6 +139,7 @@
             // pictureBox1
             // 
             this.pictureBox1.AccessibleName = "pictureBox1";
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(1362, 66);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox1.Name = "pictureBox1";
@@ -148,22 +150,24 @@
             // 
             // btnLastpicture
             // 
+            this.btnLastpicture.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnLastpicture.Location = new System.Drawing.Point(1362, 537);
             this.btnLastpicture.Name = "btnLastpicture";
             this.btnLastpicture.Size = new System.Drawing.Size(121, 23);
             this.btnLastpicture.TabIndex = 6;
             this.btnLastpicture.Text = "Anterior";
-            this.btnLastpicture.UseVisualStyleBackColor = true;
+            this.btnLastpicture.UseVisualStyleBackColor = false;
             this.btnLastpicture.Click += new System.EventHandler(this.btnLastPicture_Click);
             // 
             // btnNextPticture
             // 
+            this.btnNextPticture.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnNextPticture.Location = new System.Drawing.Point(1599, 537);
             this.btnNextPticture.Name = "btnNextPticture";
             this.btnNextPticture.Size = new System.Drawing.Size(113, 23);
             this.btnNextPticture.TabIndex = 7;
             this.btnNextPticture.Text = "Siguiente";
-            this.btnNextPticture.UseVisualStyleBackColor = true;
+            this.btnNextPticture.UseVisualStyleBackColor = false;
             this.btnNextPticture.Click += new System.EventHandler(this.btnNextPicture_Click);
             // 
             // Form1

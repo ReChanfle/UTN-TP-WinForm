@@ -187,10 +187,10 @@ namespace tp_winform_equipo_1B
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show(
-                        "No se pudo abrir la ventana de edición.\n" + ex.Message,
+                        "No se pudo abrir la ventana de edición.\n",
                         "Error",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -247,7 +247,7 @@ namespace tp_winform_equipo_1B
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "No se pudo abrir la ventana de creación.\n" + ex.Message,
+                    "No se pudo abrir la ventana de creación.\n",
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
